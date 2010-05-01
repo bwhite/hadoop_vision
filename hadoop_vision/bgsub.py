@@ -35,8 +35,7 @@ class Reducer(object):
     @staticmethod
     def _load_image(image):
         image = Image.open(StringIO.StringIO(image)).convert('L').tostring()
-        image = np.fromstring(image, dtype=np.uint8)
-        return np.array(image, np.float64)
+        return np.fromstring(image, dtype=np.uint32)
 
     def _handle_flag1(self, values):
         c, s, ss = None, None, None
@@ -45,20 +44,29 @@ class Reducer(object):
             try:
                 c += 1
                 s += image
-                ss += image * image
+                image *= image
+                ss += image
             except TypeError:
                 c = 1
                 s = image
-                ss = image * image
-        self.m = s / c
-        self.v = (ss - s * s / c) / c
+                image *= image
+                ss = image
+        inv_c_sqr = 6.25 / float(c * c)
+        inv_c = 1. / float(c)
+        self.m = s * inv_c
+        ss *= c
+        s *= s
+        ss -= s
+        ss *= inv_c_sqr
+        self.v = ss
 
     def _handle_flag2(self, values):
         for image_id, image in values:
             image = self._load_image(image)
-            diff = image - self.m
-            b = (diff * diff > 6.25 * self.v) * np.uint8(255)
-            yield image_id, b.tostring()
+            image -= self.m
+            image *= image
+            np.greater(image, self.v, image)
+            yield image_id, image.tostring()
 
 
 if __name__ == "__main__":
