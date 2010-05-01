@@ -6,7 +6,7 @@ import hadoopy
 
 def mapper(key, value):
     video, frame, data = value.split('\t')
-    yield video, (frame, base64.b64decode(data))
+    yield video, (int(frame), base64.b64decode(data))
 
 
 def reducer(key, values):
