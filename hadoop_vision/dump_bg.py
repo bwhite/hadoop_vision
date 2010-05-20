@@ -13,6 +13,6 @@ try:
 except OSError:
     pass
 
-for name, data in hadoopy.hdfs_cat_tb(FILE):
+for name, data in hadoopy.cat(FILE):
     print(name)
     Image.fromstring('L', (720, 576), data).save(OUTPUT + '/' + name + '.jpg')
