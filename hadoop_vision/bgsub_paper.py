@@ -23,7 +23,8 @@ class Reducer(object):
     @staticmethod
     def _load_image(image):
         image = Image.open(StringIO.StringIO(image)).convert('L').tostring()
-        return np.fromstring(image, dtype=np.uint32)
+        image = np.fromstring(image, dtype=np.uint8)
+        return np.array(image, dtype=np.uint32)
 
     def reduce(self, key, values):
         values = ((d, self._load_image(i)) for d, i in values)
