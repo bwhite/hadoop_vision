@@ -1,0 +1,6 @@
+import distutils.sysconfig
+env = Environment()
+env.Replace(CXX = 'g++')
+env.Append(CCFLAGS =  '-O3 -Wall')
+
+env.SharedLibrary('bgsub_fast', ['bgsub_fast.c'])

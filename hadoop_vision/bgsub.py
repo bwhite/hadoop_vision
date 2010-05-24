@@ -4,9 +4,9 @@ import base64
 import numpy as np
 import StringIO
 import Image
-
 import hadoopy
 
+import bgsub_fast
 
 class Mapper(object):
 
@@ -35,22 +35,17 @@ class Reducer(object):
     @staticmethod
     def _load_image(image):
         image = Image.open(StringIO.StringIO(image)).convert('L').tostring()
-        return np.fromstring(image, dtype=np.uint32)
+        return np.fromstring(image, dtype=np.uint8)
 
     def _handle_flag1(self, values):
-        c, s, ss = None, None, None
+        c, s, ss = 0, None, None
         for image_id, image in values:
             image = self._load_image(image)
-            try:
-                c += 1
-                s += image
-                image *= image
-                ss += image
-            except TypeError:
-                c = 1
-                s = image
-                image *= image
-                ss = image
+            c += 1
+            if s == None:
+                s = np.zeros(image.shape, dtype=np.double)
+                ss = np.zeros(image.shape, dtype=np.double)
+            bgsub_fast.accum(image, s, ss)
         inv_c_sqr = 6.25 / float(c * c)
         inv_c = 1. / float(c)
         self.m = s * inv_c
@@ -61,12 +56,13 @@ class Reducer(object):
         self.v = ss
 
     def _handle_flag2(self, values):
+        fg = None
         for image_id, image in values:
             image = self._load_image(image)
-            image -= self.m
-            image *= image
-            np.greater(image, self.v, image)
-            yield image_id, image.tostring()
+            if fg == None:
+                fg = np.zeros(image.shape, dtype=np.uint8)
+            bgsub_fast.classify(image, self.m, self.v, fg)
+            yield image_id, fg.tostring()
 
 
 if __name__ == "__main__":
