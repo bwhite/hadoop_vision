@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import base64
-
 import numpy as np
 import StringIO
 import Image
@@ -46,14 +44,9 @@ class Reducer(object):
                 s = np.zeros(image.shape, dtype=np.double)
                 ss = np.zeros(image.shape, dtype=np.double)
             bgsub_fast.accum(image, s, ss)
-        inv_c_sqr = 6.25 / float(c * c)
-        inv_c = 1. / float(c)
-        self.m = s * inv_c
-        ss *= c
-        s *= s
-        ss -= s
-        ss *= inv_c_sqr
-        self.v = ss
+        self.m = np.zeros(s.shape, dtype=np.double)
+        self.v = np.zeros(s.shape, dtype=np.double)
+        bgsub_fast.mean_var(s, ss, c, self.m, self.v)
 
     def _handle_flag2(self, values):
         fg = None

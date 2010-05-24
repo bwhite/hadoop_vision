@@ -13,20 +13,25 @@ _bg = np.ctypeslib.load_library('libbgsub_fast', '.')
 #void bgsub_accum(unsigned char *image, int size, unsigned int *s, unsigned int *ss) {
 _bg.bgsub_accum.restype = ctypes.c_int
 _bg.bgsub_accum.argtypes = [_uint8_ptr, _int, _uint32_ptr, _uint32_ptr]
-def compute(image, s, ss):
-    _bg.bgsub_accum(image.ctypes.data_as(_uint8_ptr),
-                    len(image),
-                    s.ctypes.data_as(_uint32_ptr),
-                    ss.ctypes.data_as(_uint32_ptr))
-
-#void bgsub_accum(unsigned char *image, int size, unsigned int *s, unsigned int *ss) {
-_bg.bgsub_accum.restype = ctypes.c_int
-_bg.bgsub_accum.argtypes = [_uint8_ptr, _int, _uint32_ptr, _uint32_ptr]
 def accum(image, s, ss):
     _bg.bgsub_accum(image.ctypes.data_as(_uint8_ptr),
                     len(image),
                     s.ctypes.data_as(_uint32_ptr),
                     ss.ctypes.data_as(_uint32_ptr))
+
+
+#void bgsub_mean_var(int size, unsigned int *s, unsigned int *ss, int c, double *m, double *v)
+_bg.bgsub_mean_var.restype = ctypes.c_int
+_bg.bgsub_mean_var.argtypes = [_int, _uint32_ptr, _uint32_ptr, _int, _double_ptr, _double_ptr]
+def mean_var(s, ss, c, m, v):
+    _bg.bgsub_mean_var(len(s),
+                    s.ctypes.data_as(_uint32_ptr),
+                    ss.ctypes.data_as(_uint32_ptr),
+                    c,
+                    m.ctypes.data_as(_double_ptr),
+                    v.ctypes.data_as(_double_ptr))
+
+
 
 #void bgsub_classify(unsigned char *image, int size, double *m, double *v, unsigned char *bgsub)
 _bg.bgsub_classify.restype = ctypes.c_int
