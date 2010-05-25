@@ -33,7 +33,7 @@ class Reducer(object):
     @staticmethod
     def _load_image(image):
         image = Image.open(StringIO.StringIO(image)).convert('L').tostring()
-        return np.fromstring(image, dtype=np.uint8)
+        return image
 
     def _handle_flag1(self, values):
         c, s, ss = 0, None, None
@@ -41,11 +41,11 @@ class Reducer(object):
             image = self._load_image(image)
             c += 1
             if s == None:
-                s = np.zeros(image.shape, dtype=np.double)
-                ss = np.zeros(image.shape, dtype=np.double)
+                s = np.zeros(len(image), dtype=np.float32)
+                ss = np.zeros(len(image), dtype=np.float32)
             bgsub_fast.accum(image, s, ss)
-        self.m = np.zeros(s.shape, dtype=np.double)
-        self.v = np.zeros(s.shape, dtype=np.double)
+        self.m = np.zeros(s.shape, dtype=np.float32)
+        self.v = np.zeros(s.shape, dtype=np.float32)
         bgsub_fast.mean_var(s, ss, c, self.m, self.v)
 
     def _handle_flag2(self, values):
@@ -53,9 +53,9 @@ class Reducer(object):
         for image_id, image in values:
             image = self._load_image(image)
             if fg == None:
-                fg = np.zeros(image.shape, dtype=np.uint8)
-            bgsub_fast.classify(image, self.m, self.v, fg)
-            yield image_id, fg.tostring()
+                fg = np.zeros(len(image), dtype=np.float32)
+            fg_mask  = bgsub_fast.classify(image, self.m, self.v, fg)
+            yield image_id, fg_mask.tostring()
 
 
 if __name__ == "__main__":
