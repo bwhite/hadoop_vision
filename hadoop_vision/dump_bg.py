@@ -5,7 +5,7 @@ import os
 import Image
 import hadoopy
 
-FILE = '/user/brandyn/pets2006_small.video_frame_data.b56/p*'
+FILE = '/tmp/bwhite/output/pets2006.video_frame_data.b/0.242913827463'
 OUTPUT = 'out'
 
 try:
@@ -14,5 +14,6 @@ except OSError:
     pass
 
 for name, data in hadoopy.cat(FILE):
-    print(name)
-    Image.fromstring('L', (720, 576), data).save(OUTPUT + '/' + name + '.jpg')
+    if name == '1-1-2241':
+        print(name)
+        Image.fromstring('L', (720, 576), data).save(OUTPUT + '/' + name + '.jpg')

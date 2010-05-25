@@ -32,7 +32,6 @@ def mean_var(s, ss, c, m, v):
                     v.ctypes.data_as(_float_ptr))
 
 
-
 #void bgsub_classify(unsigned char *image, int size, float *m, float *bgsub)
 _bg.bgsub_classify.restype = ctypes.c_int
 _bg.bgsub_classify.argtypes = [ctypes.c_char_p, _int, _float_ptr, _float_ptr]
@@ -41,7 +40,7 @@ def classify(image, m, v, fg):
                        len(image),
                        m.ctypes.data_as(_float_ptr),
                        fg.ctypes.data_as(_float_ptr))
-    return fg > v
+    return (fg > v) * np.uint8(255)
 
 
 if __name__ == '__main__':

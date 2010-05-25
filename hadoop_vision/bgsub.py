@@ -32,8 +32,7 @@ class Reducer(object):
 
     @staticmethod
     def _load_image(image):
-        image = Image.open(StringIO.StringIO(image)).convert('L').tostring()
-        return image
+        return Image.open(StringIO.StringIO(image)).convert('L').tostring()
 
     def _handle_flag1(self, values):
         c, s, ss = 0, None, None

@@ -1,6 +1,6 @@
 void bgsub_accum(unsigned char *image, int size, float *s, float *ss) {
   int i;
-  for (i = 0; i < size; i++) {
+  for (i = 0; i < size; ++i) {
     s[i] += image[i];
     ss[i] += image[i] * image[i];
   }  
