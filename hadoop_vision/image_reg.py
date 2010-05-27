@@ -20,9 +20,9 @@ class Reducer(object):
 
     def _first_iteration(self):
         try:
-            self.first_iter = os.environ('IR_FIRST_ITER') != 'False'
+            return os.environ['IR_FIRST_ITER'] != 'False'
         except KeyError:
-            self.first_iter = True
+            return True
 
     def reduce(self, key, values):
         i = int(key.split('\t', 1)[0])
@@ -38,11 +38,12 @@ class Reducer(object):
             self.a.append((i, cur_to))
 
     def _handle_flag0(self, i, adjlists):
-        self.close()
+        for x in self.close():
+            yield x
         self.a_orig = adjlists.next()
         self.a = list(self.a_orig) # Make copy
         if self._first_iteration():
-            for f, t in self.a:
+            for f, t in self.a_orig:
                 self.o.append(t)
         else:
             self.o.append(i)
