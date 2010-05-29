@@ -24,18 +24,14 @@ class Reducer(object):
         except KeyError:
             return True
 
-    def reduce(self, key, values):
-        i = int(key.split('\t', 1)[0])
-        return self._handle_flag0(i, values) if key[-1] == '0' else self._handle_flag1(i, values)
-
     def _update_adj_list(self, i, edge):
         from_node, to_node = edge[0:2]
         orig_to = set([x[1] for x in self.a_orig])
         cur_to = set([x[1] for x in self.a])
         if to_node not in orig_to:
-            self.o.append(from_node)
+            self.o.append(to_node)
         if to_node not in cur_to:
-            self.a.append((i, cur_to))
+            self.a.append((i, to_node))
 
     def _handle_flag0(self, i, adjlists):
         for x in self.close():
@@ -52,6 +48,10 @@ class Reducer(object):
         for l in adjlists:
             for e in l:
                 self._update_adj_list(i, e)
+
+    def reduce(self, key, values):
+        i = int(key.split('\t', 1)[0])
+        return self._handle_flag0(i, values) if key[-1] == '0' else self._handle_flag1(i, values)
 
     def close(self):
         for t in self.o:
