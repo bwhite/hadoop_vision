@@ -1,0 +1,24 @@
+Example code for "Web-scale computer vision using mapreduce for multimedia data mining"
+
+Algorithms closely track those in the paper where possible.  Alternative implementations are provided that extend those in the paper and provide more efficient implementations.
+
+
+
+Algorithm 1: Example MapReduce algorithm for computing word counts given a series of documents.
+
+
+
+
+
+
+
+If you use this in your research, please cite as
+B. White, T. Yeh, J. Lin, and L. Davis, "Web-scale computer vision using mapreduce for multimedia data mining," in MDMKDD, 2010.
+
+Bibtex
+@inproceedings{white10kdd,
+author = {Brandyn White and Tom Yeh and Jimmy Lin and Larry Davis},
+booktitle = {MDMKDD},
+title = {Web-Scale Computer Vision using MapReduce for Multimedia Data Mining},
+year = {2010}
+}
