@@ -76,5 +76,5 @@ class Reducer(object):
 
 
 if __name__ == "__main__":
-    if hadoopy.run(mapper, reducer):
+    if hadoopy.run(Mapper, Reducer):
         hadoopy.print_doc_quit(__doc__)
