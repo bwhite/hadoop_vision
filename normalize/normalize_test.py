@@ -78,8 +78,9 @@ class Test(hadoopy.Test):
                     (1, (1, 0.16666666666666666)),
                     (2, (1, 0.0)),
                     (3, (1, 1.0))]
-        
-        self.assertEqual(self.call_reduce(Reducer, self.groupby_kv(self.sort_kv(test_in))), test_out)
-
+        self.assertEqual(self.call_reduce(Reducer,
+                                          self.shuffle_kv(test_in)),
+                         test_out)
+                         
 if __name__ == '__main__':
     unittest.main()
