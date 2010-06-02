@@ -1,71 +1,53 @@
 #!/usr/bin/env python
-import os
-import time
 import cPickle as pickle
-
 import numpy as np
-
 import hadoopy
 
-import profile
 
-class Mapper(profile.ProfileJob):
-    def __init__(self):
-        super(Mapper, self).__init__()
-        with open(os.environ["CLUSTERS_PKL"]) as fp:
-            self.clusters = pickle.load(fp)
-        self.nn = __import__(os.environ['NN_MODULE'],
-                             fromlist=['nn']).nn
-        
-    def map(self, key, feat_str):
-        # Extends the array by 1 dim that has a 1. in it
-        feat_str += '\x00\x00\x80?'
-        feat = np.fromstring(feat_str, dtype=np.float32)
-        nearest_ind = self.nn(feat[0:-1], self.clusters)[0]
-        # Expand the array by 1 and use it to normalize later
-        yield nearest_ind, feat_str
+class Mapper(object):
+    def _load_clusters(self):
+        with open('clusters.pkl') as fp:
+            return pickle.load(fp)
 
-    def close(self):
-        super(Mapper, self).close()
+    def _nearest_cluster_id(self, clusters, point):
+        """Find L2 squared nearest neighbor
 
+        Args:
+            clusters: A numpy array of shape (M, N). (N=Dims, M=NumClusters)
+            point: A numpy array of shape (N,) or (1, N). (N=Dims)
+        Returns:
+            An int representing the nearest neighbor index into clusters.
+        """
+        dist = point - clusters
+        dist = np.sum(dist * dist, 1)
+        return int(np.argmin(dist))
 
-class Combiner(profile.ProfileJob):
-    def __init__(self):
-        super(Combiner, self).__init__()
+    def _extend_point(self, point):
+        point = np.resize(point, len(point) + 1)
+        point[-1] = 1
+        return point
 
-    def reduce(self, key, values):
-        cur_cluster_sum = None
-        for vec in values:
-            vec = np.fromstring(vec, dtype=np.float32)
-            try:
-                cur_cluster_sum += vec
-            except TypeError:
-                cur_cluster_sum = vec
-        yield key, cur_cluster_sum.tostring()
-    
-    def close(self):
-        super(Combiner, self).close()
+    def configure(self):
+        self.clusters = self._load_clusters()
+
+    def map(self, i, point):
+        n = self._nearest_cluster_id(self.clusters, point)
+        point = self._extend_point(point)
+        yield n, point
 
 
-class Reducer(profile.ProfileJob):
-    def __init__(self):
-        super(Reducer, self).__init__()
+class Reducer(object):
+    def _compute_centroid(self, s):
+        return s[0:-1] / s[-1]
 
-    def reduce(self, key, values):
-        cur_cluster_sum = None
-        for vec in values:
-            vec = np.fromstring(vec, dtype=np.float32)
-            try:
-                cur_cluster_sum += vec
-            except TypeError:
-                cur_cluster_sum = vec
-        center = cur_cluster_sum[0:-1] / cur_cluster_sum[-1]
-        yield key, center.tostring()
-    
-    def close(self):
-        super(Reducer, self).close()
+    def reduce(self, n, points):
+        s = 0
+        for p in points:
+            s += p
+        m = self._compute_centroid(s)
+        yield n, m
 
 
 if __name__ == "__main__":
-    if hadoopy.run(Mapper, Reducer, Combiner):
+    if hadoopy.run(Mapper, Reducer):
         hadoopy.print_doc_quit(__doc__)
