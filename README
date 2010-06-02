@@ -4,7 +4,16 @@ Algorithms closely track those in the paper where possible.  Alternative impleme
 
 
 
-Algorithm 1: Example MapReduce algorithm for computing word counts given a series of documents.
+Algorithm 1:  wordcount/wordcount.py
+Algorithm 2:  normalize/normalize.py
+Algorithm 3:  classtrain/classtrain.py
+Algorithm 4:  slidingwindow/slidingwindow.py
+Algorithm 5:  kmeans/kmeans.py
+Algorithm 6:  kmeans/kmeans_imc.py
+Algorithm 7:  bof/bof_maponly.py
+Algorithm 8:  bof/bof.py
+Algorithm 9:  bgsub/bgsub.py
+Algorithm 10: compose/compose.py
 
 
 
