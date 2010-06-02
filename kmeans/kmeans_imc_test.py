@@ -25,7 +25,7 @@ import hadoopy
 import os
 import pickle
 import numpy as np
-from kmeans import Mapper, Reducer
+from kmeans_imc import Mapper, Reducer
 
 
 class Test(hadoopy.Test):
@@ -47,27 +47,15 @@ class Test(hadoopy.Test):
                    (5, np.array([11., 11.])),
                    (6, np.array([9., 9.])),
                    (7, np.array([8., 8.]))]
-        test_out = [(0, np.array([2., 2., 1.])),
-                    (0, np.array([1., 1., 1.])),
-                    (0, np.array([-1., -1., 1.])),
-                    (0, np.array([-2., -2., 1.])),
-                    (1, np.array([12., 12., 1.])),
-                    (1, np.array([11., 11., 1.])),
-                    (1, np.array([9., 9., 1.])),
-                    (1, np.array([8., 8., 1.]))]
+        test_out = [(0, np.array([0., 0., 4.])),
+                    (1, np.array([40., 40., 4.]))]
         def tolist(s):
             return [(x[0], x[1].tolist()) for x in s]
         self.assertEqual(tolist(self.call_map(self.Mapper, test_in)), tolist(test_out))
 
     def test_reduce(self):
-        test_in = [(0, np.array([2., 2., 1.])),
-                   (0, np.array([1., 1., 1.])),
-                   (0, np.array([-1., -1., 1.])),
-                   (0, np.array([-2., -2., 1.])),
-                   (1, np.array([12., 12., 1.])),
-                   (1, np.array([11., 11., 1.])),
-                   (1, np.array([9., 9., 1.])),
-                   (1, np.array([8., 8., 1.]))]
+        test_in = [(0, np.array([0., 0., 4.])),
+                   (1, np.array([40., 40., 4.]))]
         test_out = [(0, np.array([0., 0.])),
                     (1, np.array([10., 10.]))]
         def tolist(s):
