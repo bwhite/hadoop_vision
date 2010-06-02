@@ -2,7 +2,7 @@
 import unittest
 import hadoopy
 import os
-from image_reg import Mapper, Reducer
+from compose import Mapper, Reducer
 
 def make_chain(s, l):
     cnt = s

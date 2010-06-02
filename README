@@ -3,7 +3,6 @@ Example code for "Web-scale computer vision using mapreduce for multimedia data 
 Algorithms closely track those in the paper where possible.  Alternative implementations are provided that extend those in the paper and provide more efficient implementations.
 
 
-
 Algorithm 1:  wordcount/wordcount.py
 Algorithm 2:  normalize/normalize.py
 Algorithm 3:  classtrain/classtrain.py
