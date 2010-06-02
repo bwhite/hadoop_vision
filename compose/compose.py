@@ -13,11 +13,6 @@ class Mapper(object):
             yield '%s\t%d' % (i, 1), adjlist
 
 class Reducer(object):
-    def configure(self):
-        self.o = []
-        self.a_orig = None
-        self.a = None
-
     def _first_iteration(self):
         try:
             return os.environ['IR_FIRST_ITER'] != 'False'
@@ -32,6 +27,11 @@ class Reducer(object):
             self.o.append(to_node)
         if to_node not in cur_to:
             self.a.append((i, to_node))
+
+    def configure(self):
+        self.o = []
+        self.a_orig = None
+        self.a = None
 
     def reduce(self, key, adjlists):
         i, g = map(int, key.split('\t', 1))
