@@ -17,7 +17,7 @@
 """Hadoopy Wordcount Demo
 """
 
-__author__ =  'Brandyn A. White <bwhite@cs.umd.edu>'
+__author__ = 'Brandyn A. White <bwhite@cs.umd.edu>'
 __licence__ = 'GPL V3'
 
 import hadoopy
