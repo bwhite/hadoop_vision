@@ -33,25 +33,22 @@ class Reducer(object):
         if to_node not in cur_to:
             self.a.append((i, to_node))
 
-    def _handle_flag0(self, i, adjlists):
-        for x in self.close():
-            yield x
-        self.a_orig = adjlists.next()
-        self.a = list(self.a_orig) # Make copy
-        if self._first_iteration():
-            for f, t in self.a_orig:
-                self.o.append(t)
+    def reduce(self, key, adjlists):
+        i, g = map(int, key.split('\t', 1))
+        if g == 0:
+            for x in self.close():
+                yield x
+            self.a_orig = adjlists.next()
+            self.a = list(self.a_orig) # Make copy
+            if self._first_iteration():
+                for f, t in self.a_orig:
+                    self.o.append(t)
+            else:
+                self.o.append(i)
         else:
-            self.o.append(i)
-
-    def _handle_flag1(self, i, adjlists):
-        for l in adjlists:
-            for e in l:
-                self._update_adj_list(i, e)
-
-    def reduce(self, key, values):
-        i = int(key.split('\t', 1)[0])
-        return self._handle_flag0(i, values) if key[-1] == '0' else self._handle_flag1(i, values)
+            for adjlist in adjlists:
+                for edge in adjlist:
+                    self._update_adj_list(i, edge)
 
     def close(self):
         for t in self.o:
