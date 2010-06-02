@@ -28,8 +28,8 @@ class Mapper(object):
         """Parse vectors and emit using the order inversion design pattern.
 
         Args:
-            i: vecid
-            V: vector
+            i: vecid (int)
+            V: vector (iterator of numeric values)
 
         Yields:
             A tuple in the form of (key, value)
@@ -43,8 +43,8 @@ class Mapper(object):
 
 class Reducer(object):
     def _update_extrema(self, v):
-        self.m = min(self.m, v)
-        self.M = max(self.M, v)
+        self.m = float(min(self.m, v))
+        self.M = float(max(self.M, v))
 
     def configure(self):
         self.m = self.M = self.p = None
