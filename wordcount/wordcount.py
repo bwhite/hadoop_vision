@@ -24,28 +24,28 @@ import hadoopy
 
 
 class Mapper(object):
-    def map(self, a, d):
-        """Take in a byte offset and a document, emit word counts.
+    def map(self, docid, doc):
+        """Take in a byte offset and a document, emit terms with count of 1.
 
         Args:
-            a: byte offset (unused)
-            d: document as a string of terms delimited by whitespace
+            docid: byte offset (unused)
+            doc: document as a string of terms delimited by whitespace
 
         Yields:
             A tuple in the form of (key, value)
             key: term (string)
             value: partial count (int)
         """
-        for t in d.split():
-            yield t, 1
+        for term in doc.split():
+            yield term, 1
 
 
 class Reducer(object):
-    def reduce(self, t, counts):
+    def reduce(self, term, counts):
         """Take in an iterator of counts for a word, sum them, and return sum.
 
         Args:
-            t: word (string)
+            term: word (string)
             counts: counts (int)
 
         Yields:
@@ -54,9 +54,9 @@ class Reducer(object):
             value: count (int)
         """
         _sum = 0
-        for c in counts:
-            _sum += c
-        yield t, _sum
+        for count in counts:
+            _sum += count
+        yield term, _sum
 
 
 if __name__ == "__main__":

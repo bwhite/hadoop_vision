@@ -24,21 +24,21 @@ import hadoopy
 
 
 class Mapper(object):
-    def map(self, i, V):
+    def map(self, vecid, vector):
         """Parse vectors and emit using the order inversion design pattern.
 
         Args:
-            i: vecid (int)
-            V: vector (iterator of numeric values)
+            vecid: vecid (int)
+            vector: vector (iterator of numeric values)
 
         Yields:
             A tuple in the form of (key, value)
             key: (dim, flag) (tuple of (int, int))
             value: (vecid, value) (tuple of (int, float))
         """
-        for d, v in enumerate(V):
-            yield (d, 0), (i, v)
-            yield (d, 1), (i, v)
+        for dim, val in enumerate(vector):
+            yield (dim, 0), (vecid, val)
+            yield (dim, 1), (vecid, val)
 
 
 class Reducer(object):
@@ -50,7 +50,7 @@ class Reducer(object):
         self.m = self.M = self.p = None
 
     def reduce(self, key, tuples):
-        """
+        """Outputs normalized values.
 
         Args:
             key: (dim, flag) (tuple of (int, int))
@@ -61,18 +61,18 @@ class Reducer(object):
             key: vecid (int)
             value: (dim, value) (tuple of (int, int))
         """
-        d, f = key
-        if self.p != d:
+        dim, flag = key
+        if self.p != dim:
             self.m = float('inf')
             self.M = float('-inf')
-            self.p = d
-        if f == 0:
-            for i, v in tuples:
-                self._update_extrema(v)
+            self.p = dim
+        if flag == 0:
+            for vecid, val in tuples:
+                self._update_extrema(val)
         else:
-            for i, v in tuples:
-                v = (v - self.m) / (self.M - self.m)
-                yield i, (d, v)
+            for vecid, val in tuples:
+                val = (val - self.m) / (self.M - self.m)
+                yield vecid, (dim, val)
 
 
 if __name__ == "__main__":

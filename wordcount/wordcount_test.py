@@ -63,6 +63,6 @@ class Test(hadoopy.Test):
         self.assertEqual(self.call_reduce(Reducer,
                                           self.shuffle_kv(test_in)),
                          test_out)
-                         
+
 if __name__ == '__main__':
     unittest.main()

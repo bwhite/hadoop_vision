@@ -1,13 +1,13 @@
 Example code for "Web-scale computer vision using mapreduce for multimedia data mining"
 
 Algorithms closely track those in the paper where possible.  Alternative implementations are provided that extend those in the paper and provide more efficient implementations.  The examples are all independent to make them easier to understand at the expense of duplicative code.  Variable names are chosen to be similar to the paper if possible (often using the Type as the variable name as it is more descriptive).  The implementations used for performance testing are written in C and Python and are not the ones matching the figures.
-
-Algorithm 1:  wordcount/wordcount.py
-Algorithm 2:  normalize/normalize.py
+	   	   	       	      	    	  Written    PEP8	 Tests		 Hadoop Example
+Algorithm 1:  wordcount/wordcount.py		  X	     X		 X
+Algorithm 2:  normalize/normalize.py		  X	     X		 X
 Algorithm 3:  classtrain/classtrain.py
 Algorithm 4:  slidingwindow/slidingwindow.py
-Algorithm 5:  kmeans/kmeans.py
-Algorithm 6:  kmeans/kmeans_imc.py
+Algorithm 5:  kmeans/kmeans.py			  X	     X		 X
+Algorithm 6:  kmeans/kmeans_imc.py		  X	     X		 X
 Algorithm 7:  bof/bof_maponly.py
 Algorithm 8:  bof/bof.py
 Algorithm 9:  bgsub/bgsub.py
