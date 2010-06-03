@@ -1,61 +1,42 @@
 #!/usr/bin/env python
-import numpy as np
-import StringIO
-import Image
 import hadoopy
+import numpy as np
 
-import bgsub_fast
 
 class Mapper(object):
-
     @staticmethod
     def _compute_blockid(image_id):
         images_in_block = 500
         return str(int(image_id) / images_in_block)
         
-    def map(self, video_id, value):
+    def map(self, image_id, image):
         image_id, image = value
         block_id = self._compute_blockid(image_id)
-        video_image_id = '-'.join((video_id, str(image_id)))
-        video_block_flag_id = '%s-%s\t' %(video_id, block_id)
-        yield video_block_flag_id + '1', (video_image_id, image)
-        yield video_block_flag_id + '2', (video_image_id, image)
+        yield block_id + '-1', (image_id, image)
+        yield block_id + '-2', (image_id, image)
 
-def reducer(key, values):
-    for value in values:
-        yield key, value
 
 class Reducer(object):
-
-    def reduce(self, key, values):
-        return self._handle_flag1(values) if key[-1] == '1' else self._handle_flag2(values)
-
     @staticmethod
     def _load_image(image):
-        return Image.open(StringIO.StringIO(image)).convert('L').tostring()
+        image = Image.open(StringIO.StringIO(image)).convert('L').tostring()
+        image = np.fromstring(image, dtype=np.uint8)
+        return np.array(image, dtype=np.uint32)
 
-    def _handle_flag1(self, values):
-        c, s, ss = 0, None, None
-        for image_id, image in values:
-            image = self._load_image(image)
-            c += 1
-            if s == None:
-                s = np.zeros(len(image), dtype=np.float32)
-                ss = np.zeros(len(image), dtype=np.float32)
-            bgsub_fast.accum(image, s, ss)
-        self.m = np.zeros(s.shape, dtype=np.float32)
-        self.v = np.zeros(s.shape, dtype=np.float32)
-        bgsub_fast.mean_var(s, ss, c, self.m, self.v)
-
-    def _handle_flag2(self, values):
-        fg = None
-        for image_id, image in values:
-            image = self._load_image(image)
-            if fg == None:
-                fg = np.zeros(len(image), dtype=np.float32)
-            fg_mask  = bgsub_fast.classify(image, self.m, self.v, fg)
-            yield image_id, fg_mask.tostring()
-
+    def reduce(self, key, values):
+        values = ((d, self._load_image(i)) for d, i in values)
+        if key[-1] == '0':
+            c = s = ss = 0
+            for d, i in values:
+                c += 1
+                s += i
+                ss += i**2
+            self.m = s / c
+            self.v = (ss - s**2 / c) / c
+        else:
+            for d, i in values:
+                b = (i - self.m)**2 > 6.25 * self.v
+                yield d, b.tostring()
 
 if __name__ == "__main__":
     if hadoopy.run(Mapper, Reducer):
