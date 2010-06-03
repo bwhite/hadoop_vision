@@ -39,7 +39,7 @@ class Reducer(object):
             # h_from_to is H_B_C and we need to find H_A_B from our adjacency
             # list because we want to end up with H_A_C.
             # We do this below as H_A_C = H_A_B * H_B_C
-            h = self._find_to_h(from_node) * h_from_to
+            h = np.dot(self._find_to_h(from_node), h_from_to)
             self.a.append((i, to_node, h))
 
     def configure(self):
