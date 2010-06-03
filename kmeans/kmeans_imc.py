@@ -1,4 +1,25 @@
 #!/usr/bin/env python
+# (C) Copyright 2010 Brandyn A. White
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+"""Hadoop K-means IMC Demo
+"""
+
+__author__ = 'Brandyn A. White <bwhite@cs.umd.edu>'
+__licence__ = 'GPL V3'
+
 import cPickle as pickle
 import numpy as np
 import hadoopy
@@ -32,6 +53,17 @@ class Mapper(object):
         self.H = {}
 
     def map(self, i, point):
+        """Take in a point, find its NN.
+
+        Args:
+            i: point id (unused)
+            point: numpy array
+
+        Yields:
+            A tuple in the form of (key, value)
+            key: nearest cluster index (int)
+            value: partial sum (numpy array)
+        """
         n = self._nearest_cluster_id(self.clusters, point)
         point = self._extend_point(point)
         self.H[n] = self.H.get(n, 0) + point
@@ -46,6 +78,17 @@ class Reducer(object):
         return s[0:-1] / s[-1]
 
     def reduce(self, n, points):
+        """Take in a series of points, find their sum.
+
+        Args:
+            n: nearest cluster index (int)
+            points: partial sums (numpy arrays)
+
+        Yields:
+            A tuple in the form of (key, value)
+            key: cluster index (int)
+            value: cluster center (numpy array)
+        """
         s = 0
         for p in points:
             s += p

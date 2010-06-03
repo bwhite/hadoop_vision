@@ -49,18 +49,23 @@ class Test(hadoopy.Test):
                    (7, np.array([8., 8.]))]
         test_out = [(0, np.array([0., 0., 4.])),
                     (1, np.array([40., 40., 4.]))]
+
         def tolist(s):
             return [(x[0], x[1].tolist()) for x in s]
-        self.assertEqual(tolist(self.call_map(self.Mapper, test_in)), tolist(test_out))
+        self.assertEqual(tolist(self.call_map(self.Mapper, test_in)),
+                         tolist(test_out))
 
     def test_reduce(self):
         test_in = [(0, np.array([0., 0., 4.])),
                    (1, np.array([40., 40., 4.]))]
         test_out = [(0, np.array([0., 0.])),
                     (1, np.array([10., 10.]))]
+
         def tolist(s):
             return [(x[0], x[1].tolist()) for x in s]
-        self.assertEqual(tolist(self.call_reduce(self.Reducer, self.shuffle_kv(test_in))), tolist(test_out))
-                         
+        self.assertEqual(tolist(self.call_reduce(self.Reducer,
+                                                 self.shuffle_kv(test_in))),
+                         tolist(test_out))
+
 if __name__ == '__main__':
     unittest.main()
