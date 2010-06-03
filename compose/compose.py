@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import os
+
 import hadoopy
+import numpy as np
 
 class Mapper(object):
     def _extract_node_from(self, adjlist):
@@ -19,14 +21,26 @@ class Reducer(object):
         except KeyError:
             return True
 
+    def _find_to_h(self, to_find):
+        for from_node, to_node, h_from_to in self.a:
+            if to_node == to_find:
+                return h_from_to
+
     def _update_adj_list(self, i, edge):
-        from_node, to_node = edge[0:2]
+        from_node, to_node, h_from_to = edge[0:3]
         orig_to = set([x[1] for x in self.a_orig])
         cur_to = set([x[1] for x in self.a])
         if to_node not in orig_to:
             self.o.append(to_node)
         if to_node not in cur_to:
-            self.a.append((i, to_node))
+            # Let the current node (i in this case) be A, a node on it's adj
+            # list is B (from_node in this case), and a node that is not in
+            # A's adjacency list but is in B's be C (to_node in this case).
+            # h_from_to is H_B_C and we need to find H_A_B from our adjacency
+            # list because we want to end up with H_A_C.
+            # We do this below as H_A_C = H_A_B * H_B_C
+            h = self._find_to_h(from_node) * h_from_to
+            self.a.append((i, to_node, h))
 
     def configure(self):
         self.o = []
@@ -41,7 +55,7 @@ class Reducer(object):
             self.a_orig = adjlists.next()
             self.a = list(self.a_orig) # Make copy
             if self._first_iteration():
-                for f, t in self.a_orig:
+                for f, t, H in self.a_orig:
                     self.o.append(t)
             else:
                 self.o.append(i)
