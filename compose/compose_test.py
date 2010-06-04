@@ -7,6 +7,7 @@ import numpy as np
 
 from compose import Mapper, Reducer
 
+
 def make_chain(s, l):
     cnt = s
     test_in = []
@@ -23,7 +24,6 @@ def make_chain(s, l):
 
 
 class TestImageReg(hadoopy.Test):
-    
     def __init__(self, *args, **kw):
         super(TestImageReg, self).__init__(*args, **kw)
 
@@ -64,7 +64,8 @@ class TestImageReg(hadoopy.Test):
                     (3, [(2, 1, e), (2, 2, e), (2, 3, e)]),
                     (2, [(3, 2, e), (3, 3, e)]),
                     (3, [(3, 2, e), (3, 3, e)])]
-        self.assertEqual(self.call_reduce(Reducer, self.groupby_kv(test_in)), test_out)
+        self.assertEqual(self.call_reduce(Reducer, self.groupby_kv(test_in)),
+                         test_out)
 
     def test_reduce_shift(self):
         os.environ['IR_FIRST_ITER'] = 'False'
@@ -87,9 +88,13 @@ class TestImageReg(hadoopy.Test):
                     (1, [(1, 0, s_inv), (1, 1, e), (1, 2, s)]),
                     (2, [(2, 0, ss_inv), (2, 1, s_inv), (2, 2, e)]),
                     (0, [(2, 0, ss_inv), (2, 1, s_inv), (2, 2, e)])]
+
         def tolist(s):
-            return [(x[0], [(a,b,c.tolist()) for a, b, c in sorted(x[1])]) for x in sorted(s)]
-        self.assertEqual(tolist(self.call_reduce(Reducer, self.shuffle_kv(test_in))), tolist(test_out))
+            return [(x[0], [(a, b, c.tolist()) for a, b, c in sorted(x[1])])
+                    for x in sorted(s)]
+        self.assertEqual(tolist(self.call_reduce(Reducer,
+                                                 self.shuffle_kv(test_in))),
+                         tolist(test_out))
 
     def test_map1(self):
         self.reset_first()
@@ -152,17 +157,19 @@ class TestImageReg(hadoopy.Test):
         i = 0
         full_set = set(range(l))
         while 1:
-            test_in = self.call_reduce(Reducer, self.groupby_kv(self.sort_kv(self.call_map(Mapper, test_in))))
+            kv = self.groupby_kv(self.sort_kv(self.call_map(Mapper, test_in)))
+            test_in = self.call_reduce(Reducer, kv)
             os.environ['IR_FIRST_ITER'] = 'False'
             if i != 0 and len(test_in) == l:
                 for test_edge in test_in:
-                    self.assertEqual(set([x[1] for x in test_edge[1]]), full_set)
+                    test_full_set = set([x[1] for x in test_edge[1]])
+                    self.assertEqual(test_full_set, full_set)
                 break
             i += 1
 
     def test_chain(self):
         for i in range(1, 5):
-            self._chain_iter(2**i)
+            self._chain_iter(2 ** i)
 
 
 if __name__ == '__main__':
