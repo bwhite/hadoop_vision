@@ -62,6 +62,7 @@ class Mapper(object):
         clusterid = self._nearest_cluster_id(self.clusters, feature)
         yield imageid, clusterid
 
+
 class Reducer(object):
     def _update_histogram(self, clusterid, histogram):
         try:
