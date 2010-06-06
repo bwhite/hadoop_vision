@@ -90,7 +90,8 @@ class TestImageReg(hadoopy.Test):
                     (1, [(1, 0, s_inv), (1, 1, e), (1, 2, s)]),
                     (2, [(2, 0, ss_inv), (2, 1, s_inv), (2, 2, e)]),
                     (0, [(2, 0, ss_inv), (2, 1, s_inv), (2, 2, e)])]
-        kv = self.rout_tolist(self.call_reduce(Reducer, self.shuffle_kv(test_in)))
+        kv = self.rout_tolist(self.call_reduce(Reducer,
+                                               self.shuffle_kv(test_in)))
         self.assertEqual(kv, self.rout_tolist(test_out))
 
     def test_map1(self):
@@ -165,7 +166,8 @@ class TestImageReg(hadoopy.Test):
                     (3, [(1, 0, e), (1, 1, e), (1, 2, e), (1, 3, e)]),
                     (3, [(2, 0, e), (2, 1, e), (2, 2, e), (2, 3, e)]),
                     (3, [(3, 1, e), (3, 2, e), (3, 3, e)])]
-        kv = self.rout_tolist(self.call_reduce(Reducer, self.groupby_kv(test_in)))
+        kv = self.rout_tolist(self.call_reduce(Reducer,
+                                               self.groupby_kv(test_in)))
         self.assertEqual(kv, self.rout_tolist(test_out))
 
     def _chain_iter(self, l):

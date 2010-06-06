@@ -21,19 +21,19 @@ __author__ = 'Brandyn A. White <bwhite@cs.umd.edu>'
 __license__ = 'GPL V3'
 
 import unittest
-import os
 import glob
 
 import hadoopy
 import Image
 import numpy as np
+
 from classtrain import Mapper, Reducer
 
 
 class Test(hadoopy.Test):
     def __init__(self, *args, **kw):
         super(Test, self).__init__(*args, **kw)
-    
+
     def _load_image_as_np(self, fn):
         image = Image.open(fn).convert('L')
         image_size = image.size
@@ -72,8 +72,8 @@ class Test(hadoopy.Test):
                              -1: [95.844938271604931, 105.45872333895964,
                                   77.342401960784315, 175.46912202380952,
                                   205.85798313372547, 104.77855072463768]})]
-        result = self.call_reduce(Reducer,
-                                  self.shuffle_kv(self.call_map(Mapper, test_in)))
+        kv = self.shuffle_kv(self.call_map(Mapper, test_in))
+        result = self.call_reduce(Reducer, kv)
         self.assertEqual(result, test_out)
 
 if __name__ == '__main__':

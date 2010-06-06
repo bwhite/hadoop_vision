@@ -52,11 +52,11 @@ class Mapper(object):
         self.clusters = self._load_clusters()
         self.H = {}
 
-    def map(self, i, point):
+    def map(self, unused_i, point):
         """Take in a point, find its NN.
 
         Args:
-            i: point id (unused)
+            unused_i: point id (unused)
             point: numpy array
 
         Yields:

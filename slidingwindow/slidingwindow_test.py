@@ -22,7 +22,6 @@ __license__ = 'GPL V3'
 
 import unittest
 import hadoopy
-import os
 
 import Image
 import numpy as np
@@ -43,8 +42,8 @@ class Test(hadoopy.Test):
                   for y in range(0, image_size[1])]
         test_in = [([0., 0.], (coords, image))]
         test_out = [([4.0, 4.0, 5.0, 5.0], 255.0)]
-        result = self.call_reduce(Reducer,
-                                  self.shuffle_kv(self.call_map(Mapper, test_in)))
+        kv = self.shuffle_kv(self.call_map(Mapper, test_in))
+        result = self.call_reduce(Reducer, kv)
         self.assertEqual(result, test_out)
 
     def test_mapreduce1(self):
@@ -59,11 +58,9 @@ class Test(hadoopy.Test):
         test_out = [([0.0, 0.0, 1.0, 1.0], 255.0),
                     ([4.0, 4.0, 5.0, 5.0], 255.0),
                     ([9.0, 9.0, 10.0, 10.0], 255.0)]
-        result = self.call_reduce(Reducer,
-                                  self.shuffle_kv(self.call_map(Mapper, test_in)))
+        kv = self.shuffle_kv(self.call_map(Mapper, test_in))
+        result = self.call_reduce(Reducer, kv)
         self.assertEqual(result, test_out)
-
-
 
 if __name__ == '__main__':
     unittest.main()

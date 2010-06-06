@@ -22,7 +22,7 @@ __license__ = 'GPL V3'
 
 import unittest
 import hadoopy
-import os
+
 from wordcount import Mapper, Reducer
 
 

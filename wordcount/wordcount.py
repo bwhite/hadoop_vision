@@ -24,11 +24,11 @@ import hadoopy
 
 
 class Mapper(object):
-    def map(self, docid, doc):
+    def map(self, unused_docid, doc):
         """Take in a byte offset and a document, emit terms with count of 1.
 
         Args:
-            docid: byte offset (unused)
+            unused_docid: byte offset (unused)
             doc: document as a string of terms delimited by whitespace
 
         Yields:

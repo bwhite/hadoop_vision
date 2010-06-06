@@ -22,7 +22,6 @@ __license__ = 'GPL V3'
 
 import unittest
 import hadoopy
-import os
 from normalize import Mapper, Reducer
 
 

@@ -29,7 +29,7 @@ class Mapper(object):
         """Extract the model_ids from the metadata
 
         Args:
-            metadata: Dict of the form {'model_ids': [id0, ...], 'positive_id': id}
+            metadata: Dict as {'model_ids': [id0, ...], 'positive_id': id}
 
         Returns:
             The model_ids
@@ -40,7 +40,7 @@ class Mapper(object):
         """Extract the positive_id from the metadata
 
         Args:
-            metadata: Dict of the form {'model_ids': [id0, ...], 'positive_id': id}
+            metadata: Dict as {'model_ids': [id0, ...], 'positive_id': id}
 
         Returns:
             The positive_id
@@ -62,13 +62,13 @@ class Mapper(object):
         """Perform a classification in a 'sliding window' pattern
 
         Args:
-            metadata: Dict of the form {'model_ids': [id0, ...], 'positive_id': id}
+            metadata: Dict as {'model_ids': [id0, ...], 'positive_id': id}
             value: Image as a 2d np array
 
         Yields:
             A tuple in the form of (key, value)
             key: model_id
-            value: A tuple in the form of (feature, polarity) as (np array, int)
+            value: A tuple in the form (feature, polarity) as (np array, int)
                 with polarity as -1 or 1
         """
         model_ids = self._parse_model_ids(metadata)
@@ -104,7 +104,7 @@ class Reducer(object):
 
         Args:
             model_id: model_id
-            tuples: Tuples in the form of (feature, polarity) as (np array, int)
+            tuples: Tuples in the form (feature, polarity) as (np array, int)
 
         Yields:
             A tuple in the form of (key, value)
