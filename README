@@ -23,11 +23,11 @@ Algorithms closely track those in the paper where possible.  Alternative impleme
 Algorithm 1:  wordcount/wordcount.py		  X	     X		 X
 Algorithm 2:  normalize/normalize.py		  X	     X		 X
 Algorithm 3:  classtrain/classtrain.py
-Algorithm 4:  slidingwindow/slidingwindow.py
+Algorithm 4:  slidingwindow/slidingwindow.py	  X	     X	         X
 Algorithm 5:  kmeans/kmeans.py			  X	     X		 X
 Algorithm 6:  kmeans/kmeans_imc.py		  X	     X		 X
-Algorithm 7:  bof/bof_maponly.py
-Algorithm 8:  bof/bof.py
+Algorithm 7:  bof/bof_maponly.py		  X	     X		 X
+Algorithm 8:  bof/bof.py			  X	     X		 X
 Algorithm 9:  bgsub/bgsub.py			  X	     X		 X
 Algorithm 10: compose/compose.py		  X	     X		 X
 

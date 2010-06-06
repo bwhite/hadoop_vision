@@ -26,9 +26,9 @@ import numpy as np
 
 class Mapper(object):
     def __init__(self):
-        self._thresh = 1.
-        r = 3  # Non-max suppression neighbor radius
-        self._neighbor_multiples = [np.array([y, y + 1, x, x + 1])
+        self._thresh = 0.
+        r = 1  # Non-max suppression neighbor radius
+        self._neighbor_multiples = [np.array([y, x])
                                     for x in range(-r, r + 1)
                                     for y in range(-r, r + 1)
                                     if not x == y == 0]
@@ -49,7 +49,7 @@ class Mapper(object):
         """Generates coordinates for neighboring ROIs
 
         Args:
-            offset: pixel offset for the ROI (y, x) (np array)
+            offset: pixel offset for ROI (y_tl, x_tl, y_br, x_br)
             coord: ROI location (y_tl, x_tl, y_br, x_br) (np array)
 
         Returns:
@@ -57,31 +57,35 @@ class Mapper(object):
         """
         height = coord[2] - coord[0]
         width = coord[3] - coord[1]
-        scale = np.array([height, height, width, width])
-        shift = np.array([offset[0], offset[0], offset[1], offset[1]])
-        return (x * scale + shift for x in self._neighbor_multiples)
+        scale = np.array([height, width])
+        shift = offset[0:2] + coord[0:2]
+        neighbors = [x * scale + shift for x in self._neighbor_multiples]
+        return [np.concatenate([x, x + 1]) for x in neighbors]
 
     def map(self, offset, value):
         """Perform a classification in a 'sliding window' pattern
 
         Args:
-            offset: A numpy array representing the pixel offset for the ROI
-            value: A tuple in the form (top left coords, image) as
-                   (list of numpy arrays, 2d numpy array)
+            offset: A numpy array representing the pixel offset for the ROI as
+                (y_tl, x_tl) (list of floats)
+            value: A tuple in the form (coords, image) as
+                (list of numpy arrays, 2d numpy array) where coord is
+                (y_tl, x_tl, y_br, x_br) (np array)
 
         Yields:
             A tuple in the form of (key, value)
             key: region coord (numpy array)
             value: A tuple in the form of (confidence, flag) as (float, int)
         """
+        offset = np.concatenate((offset, offset))  # Simplifies notation
         coords, image = value
         for coord in coords:
             p = self._classify(image, coord)
             if p > self._thresh:
                 neighbor_coords = self._neighbors(offset, coord)
                 for neighbor_coord in neighbor_coords:
-                    yield neighbor_coord, (p, 0)
-                yield coord + offset, (p, 1)
+                    yield neighbor_coord.tolist(), (p, 0)
+                yield (coord + offset).tolist(), (p, 1)
 
 
 class Reducer(object):
@@ -89,12 +93,12 @@ class Reducer(object):
         """Collect neighboring classifications and emit coord if local maxima
 
         Args:
-            coord: ROI location (y_tl, x_tl, y_br, x_br) (np array)
+            coord: ROI location (y_tl, x_tl, y_br, x_br) (list of floats)
             tuples: Tuples in the form of (confidence, flag) as (float, int)
 
         Yields:
             A tuple in the form of (key, value)
-            key: ROI location (y_tl, x_tl, y_br, x_br) (np array)
+            key: ROI location (y_tl, x_tl, y_br, x_br) (list of floats)
             value: confidence (float)
         """
         max_flag = max_confidence = 0
