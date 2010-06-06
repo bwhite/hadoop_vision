@@ -21,6 +21,7 @@ __author__ = 'Brandyn A. White <bwhite@cs.umd.edu>'
 __license__ = 'GPL V3'
 
 import unittest
+import os
 import hadoopy
 import pickle
 import numpy as np
@@ -32,11 +33,16 @@ class Test(hadoopy.Test):
     def __init__(self, *args, **kw):
         super(Test, self).__init__(*args, **kw)
 
-    def test_map(self):
+    def setUp(self):
         clusters = [np.array([4., 4.]),
                     np.array([6., 6.])]
         with open('clusters.pkl', 'w') as fp:
             pickle.dump(clusters, fp, 2)
+
+    def tearDown(self):
+        os.remove('clusters.pkl')
+
+    def test_map(self):
         test_in = []
         test_in.append((0, [np.array([0., 0.]),
                             np.array([1., 1.]),

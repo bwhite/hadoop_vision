@@ -22,6 +22,7 @@ __license__ = 'GPL V3'
 
 import unittest
 import hadoopy
+import os
 import pickle
 import numpy as np
 from kmeans_imc import Mapper, Reducer
@@ -33,11 +34,16 @@ class Test(hadoopy.Test):
         self.Mapper = Mapper
         self.Reducer = Reducer
 
-    def test_map(self):
+    def setUp(self):
         clusters = [np.array([4., 4.]),
                     np.array([6., 6.])]
         with open('clusters.pkl', 'w') as fp:
             pickle.dump(clusters, fp, 2)
+
+    def tearDown(self):
+        os.remove('clusters.pkl')
+
+    def test_map(self):
         test_in = [(0, np.array([2., 2.])),
                    (1, np.array([1., 1.])),
                    (2, np.array([-1., -1.])),
