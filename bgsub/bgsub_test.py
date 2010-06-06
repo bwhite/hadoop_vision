@@ -40,7 +40,7 @@ class Test(hadoopy.Test):
         super(Test, self).__init__(*args, **kw)
 
     def test_mapreduce(self):
-        test_in = pickle.load(gzip.open(data_fn))
+        test_in = pickle.load(gzip.open(DATA_FN))
         out = self.call_reduce(Reducer,
                                self.shuffle_kv(self.call_map(Mapper, test_in)))
         try:
@@ -51,7 +51,7 @@ class Test(hadoopy.Test):
             image_fn = 'output/%s-%.10d.png' % image_id
             print(image_fn)
             image = image.replace('\x01', '\xff')
-            Image.fromstring('L', image_size, image).save(image_fn)
+            Image.fromstring('L', SZ, image).save(image_fn)
 
 if __name__ == '__main__':
     unittest.main()
