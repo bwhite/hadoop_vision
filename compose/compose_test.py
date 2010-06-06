@@ -30,7 +30,6 @@ from compose import Mapper, Reducer
 
 
 def make_chain(s, l):
-    cnt = s
     test_in = []
     e = np.eye(3)
     for x in range(s, l - 1):
@@ -54,6 +53,10 @@ class TestImageReg(hadoopy.Test):
         except KeyError:
             pass
 
+    def rout_tolist(self, s):
+        return [(x[0], [(a, b, c.tolist()) for a, b, c in sorted(x[1])])
+                for x in sorted(s)]
+
     def test_map(self):
         self.reset_first()
         e = np.eye(3)
@@ -67,30 +70,8 @@ class TestImageReg(hadoopy.Test):
                     ('3\t0', [(3, 2, e), (3, 3, e)])]
         self.assertEqual(self.call_map(Mapper, test_in), test_out)
 
-    def test_reduce(self):
-        self.reset_first()
-        ite = lambda x: iter([x])
-        e = np.eye(3)
-        test_in = [('0\t0', [(0, 0, e), (0, 1, e)]),
-                    ('1\t0', [(1, 0, e), (1, 1, e), (1, 2, e)]),
-                    ('2\t0', [(2, 1, e), (2, 2, e), (2, 3, e)]),
-                    ('3\t0', [(3, 2, e), (3, 3, e)])]
-        test_out = [(0, [(0, 0, e), (0, 1, e)]),
-                    (1, [(0, 0, e), (0, 1, e)]),
-                    (0, [(1, 0, e), (1, 1, e), (1, 2, e)]),
-                    (1, [(1, 0, e), (1, 1, e), (1, 2, e)]),
-                    (2, [(1, 0, e), (1, 1, e), (1, 2, e)]),
-                    (1, [(2, 1, e), (2, 2, e), (2, 3, e)]),
-                    (2, [(2, 1, e), (2, 2, e), (2, 3, e)]),
-                    (3, [(2, 1, e), (2, 2, e), (2, 3, e)]),
-                    (2, [(3, 2, e), (3, 3, e)]),
-                    (3, [(3, 2, e), (3, 3, e)])]
-        self.assertEqual(self.call_reduce(Reducer, self.groupby_kv(test_in)),
-                         test_out)
-
     def test_reduce_shift(self):
         os.environ['IR_FIRST_ITER'] = 'False'
-        ite = lambda x: iter([x])
         e = np.eye(3)
         s = np.mat('[1,0,5;0,1,5;0,0,1.]')
         s_inv = s.I.A
@@ -109,13 +90,8 @@ class TestImageReg(hadoopy.Test):
                     (1, [(1, 0, s_inv), (1, 1, e), (1, 2, s)]),
                     (2, [(2, 0, ss_inv), (2, 1, s_inv), (2, 2, e)]),
                     (0, [(2, 0, ss_inv), (2, 1, s_inv), (2, 2, e)])]
-
-        def tolist(s):
-            return [(x[0], [(a, b, c.tolist()) for a, b, c in sorted(x[1])])
-                    for x in sorted(s)]
-        self.assertEqual(tolist(self.call_reduce(Reducer,
-                                                 self.shuffle_kv(test_in))),
-                         tolist(test_out))
+        kv = self.rout_tolist(self.call_reduce(Reducer, self.shuffle_kv(test_in)))
+        self.assertEqual(kv, self.rout_tolist(test_out))
 
     def test_map1(self):
         self.reset_first()
@@ -142,9 +118,28 @@ class TestImageReg(hadoopy.Test):
                     ('3\t0', [(3, 2, e), (3, 3, e)])]
         self.assertEqual(self.call_map(Mapper, test_in), test_out)
 
+    def test_reduce0(self):
+        self.reset_first()
+        e = np.eye(3)
+        test_in = [('0\t0', [(0, 0, e), (0, 1, e)]),
+                    ('1\t0', [(1, 0, e), (1, 1, e), (1, 2, e)]),
+                    ('2\t0', [(2, 1, e), (2, 2, e), (2, 3, e)]),
+                    ('3\t0', [(3, 2, e), (3, 3, e)])]
+        test_out = [(0, [(0, 0, e), (0, 1, e)]),
+                    (1, [(0, 0, e), (0, 1, e)]),
+                    (0, [(1, 0, e), (1, 1, e), (1, 2, e)]),
+                    (1, [(1, 0, e), (1, 1, e), (1, 2, e)]),
+                    (2, [(1, 0, e), (1, 1, e), (1, 2, e)]),
+                    (1, [(2, 1, e), (2, 2, e), (2, 3, e)]),
+                    (2, [(2, 1, e), (2, 2, e), (2, 3, e)]),
+                    (3, [(2, 1, e), (2, 2, e), (2, 3, e)]),
+                    (2, [(3, 2, e), (3, 3, e)]),
+                    (3, [(3, 2, e), (3, 3, e)])]
+        self.assertEqual(self.call_reduce(Reducer, self.groupby_kv(test_in)),
+                         test_out)
+
     def test_reduce1(self):
         self.reset_first()
-        ite = lambda x: iter([x])
         e = np.eye(3)
         test_in = [('0\t0', [(0, 0, e), (0, 1, e)]),
                    ('0\t1', [(1, 0, e), (1, 1, e), (1, 2, e)]),
@@ -157,19 +152,21 @@ class TestImageReg(hadoopy.Test):
                    ('3\t0', [(3, 2, e), (3, 3, e)]),
                    ('3\t1', [(2, 1, e), (2, 2, e), (2, 3, e)])]
         test_out = [(0, [(0, 0, e), (0, 1, e), (0, 2, e)]),
-                    (1, [(0, 0, e), (0, 1, e), (0, 2, e)]),
-                    (1, [(0, 0, e), (0, 1, e), (0, 2, e)]),
                     (0, [(1, 0, e), (1, 1, e), (1, 2, e), (1, 3, e)]),
+                    (0, [(2, 0, e), (2, 1, e), (2, 2, e), (2, 3, e)]),
+                    (1, [(0, 0, e), (0, 1, e), (0, 2, e)]),
                     (1, [(1, 0, e), (1, 1, e), (1, 2, e), (1, 3, e)]),
+                    (1, [(2, 0, e), (2, 1, e), (2, 2, e), (2, 3, e)]),
+                    (1, [(3, 1, e), (3, 2, e), (3, 3, e)]),
+                    (2, [(0, 0, e), (0, 1, e), (0, 2, e)]),
                     (2, [(1, 0, e), (1, 1, e), (1, 2, e), (1, 3, e)]),
-                    (2, [(1, 0, e), (1, 1, e), (1, 2, e), (1, 3, e)]),
-                    (1, [(2, 1, e), (2, 2, e), (2, 3, e), (2, 0, e)]),
-                    (2, [(2, 1, e), (2, 2, e), (2, 3, e), (2, 0, e)]),
-                    (3, [(2, 1, e), (2, 2, e), (2, 3, e), (2, 0, e)]),
-                    (1, [(2, 1, e), (2, 2, e), (2, 3, e), (2, 0, e)]),
-                    (2, [(3, 2, e), (3, 3, e), (3, 1, e)]),
-                    (3, [(3, 2, e), (3, 3, e), (3, 1, e)]),
-                    (2, [(3, 2, e), (3, 3, e), (3, 1, e)])]
+                    (2, [(2, 0, e), (2, 1, e), (2, 2, e), (2, 3, e)]),
+                    (2, [(3, 1, e), (3, 2, e), (3, 3, e)]),
+                    (3, [(1, 0, e), (1, 1, e), (1, 2, e), (1, 3, e)]),
+                    (3, [(2, 0, e), (2, 1, e), (2, 2, e), (2, 3, e)]),
+                    (3, [(3, 1, e), (3, 2, e), (3, 3, e)])]
+        kv = self.rout_tolist(self.call_reduce(Reducer, self.groupby_kv(test_in)))
+        self.assertEqual(kv, self.rout_tolist(test_out))
 
     def _chain_iter(self, l):
         test_in = make_chain(0, l)
