@@ -34,7 +34,7 @@ class Test(hadoopy.Test):
         super(Test, self).__init__(*args, **kw)
 
     def test_mapreduce0(self):
-        image = Image.open('test0.png')
+        image = Image.open('test_data/test0.png')
         image_size = image.size
         image = np.fromstring(image.tostring(), dtype=np.uint8)
         image = image.reshape((image_size[1], image_size[0]))
@@ -48,7 +48,7 @@ class Test(hadoopy.Test):
         self.assertEqual(result, test_out)
 
     def test_mapreduce1(self):
-        image = Image.open('test1.png')
+        image = Image.open('test_data/test1.png')
         image_size = image.size
         image = np.fromstring(image.tostring(), dtype=np.uint8)
         image = image.reshape((image_size[1], image_size[0]))
