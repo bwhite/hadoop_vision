@@ -31,8 +31,8 @@ import numpy as np
 
 from bgsub import Mapper, Reducer
 
-DATA_FN, SZ = 'pets2006-S1-T1-C-0-499.video_frame_data_small.pkl.gz', (45, 36)
-#DATA_FN, SZ = 'pets2006-S1-T1-C-0-499.video_frame_data.pkl.gz', (720, 576)
+DATA_FN, SZ = 'input/pets2006-S1-T1-C-0-499.video_frame_data_small.pkl.gz', (45, 36)
+#DATA_FN, SZ = 'input/pets2006-S1-T1-C-0-499.video_frame_data.pkl.gz', (720, 576)
 
 
 class Test(hadoopy.Test):

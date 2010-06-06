@@ -44,13 +44,13 @@ class Test(hadoopy.Test):
         # Test data is white cat, black dog, and neither
         test_in = []
         all_data = {'cat': [], 'dog': [], 'misc': []}
-        for fn in sorted(glob.glob('test_data/cat*.jpg')):
+        for fn in sorted(glob.glob('input/classtrain/cat*.jpg')):
             image = self._load_image_as_np(fn)
             all_data['cat'].append(image)
-        for fn in sorted(glob.glob('test_data/dog*.jpg')):
+        for fn in sorted(glob.glob('input/classtrain/dog*.jpg')):
             image = self._load_image_as_np(fn)
             all_data['dog'].append(image)
-        for fn in sorted(glob.glob('test_data/misc*.jpg')):
+        for fn in sorted(glob.glob('input/classtrain/misc*.jpg')):
             image = self._load_image_as_np(fn)
             all_data['misc'].append(image)
         model_ids = ['cat', 'dog']
