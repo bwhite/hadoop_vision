@@ -1,24 +1,35 @@
 Example code for "Web-scale computer vision using mapreduce for multimedia data mining"
 
 Notes about these examples
-- Goal: Ground the examples in the paper to actual implementations to improve understanding
+- Goal: Ground the examples in the paper with actual implementations to improve understanding
 - As similar in function to the paper as possible
 - Variable names may differ if it improves readability (often the 'type' as it is more descriptive)
 - These are not the implementations used for the performance tests as those mix C/Python, use more complex Python libraries, use the TypedBytes input format, etc.
 - Portions of the algorithms may be 'mocked' out if their functionality is not of focus
 - Independent to make them easier to understand at the expense of duplicative code
-- Implementations used for performance testing are written in C and Python and differ from the provided algorithms
 - A copy of the paper is provided in the project root
+- Any external test data is in the "input" folder in the project root
 
 Requirements
-[] python (2.6.5)
-[] hadoopy (0.1)
-[] numpy (1.3.0)
-[] PIL (1.1.7)
+- python (2.6.5)
+- hadoopy (0.1)
+- numpy (1.3.0)
+- PIL (1.1.7)
+- nose (0.11.1)
 
 Additional Requirements (if you want to run Hadoop cluster examples)
-[] cxfreeze (4.0.1)
-[] hadoop (Cloudera CDH3 0.20.2+228)
+- cxfreeze (4.0.1)
+- hadoop (Cloudera CDH3 0.20.2+228)
+
+Running Tests
+At the project root you can run "nosetest" from the project root if you have it installed.  Otherwise, each test can be run individually from the project root.
+For example (in BASH shell in project root)
+$ python kmeans/kmeans_test.py
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.013s
+
+OK
 
 Mapping from paper Algorithm #'s to code
 	   	   	       	      	    	  Written    PEP8	 Tests		 Hadoop Example Run/Data
