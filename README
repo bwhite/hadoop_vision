@@ -5,7 +5,10 @@ Notes about these examples
 - As similar in function to the paper as possible
 - Variable names may differ if it improves readability (often the 'type' as it is more descriptive)
 - These are not the implementations used for the performance tests as those mix C/Python, use more complex Python libraries, use the TypedBytes input format, etc.
-- Portions of the algorithms may be 'mocked' out if their functionality is not of focus.
+- Portions of the algorithms may be 'mocked' out if their functionality is not of focus
+- Independent to make them easier to understand at the expense of duplicative code
+- Implementations used for performance testing are written in C and Python and differ from the provided algorithms
+- A copy of the paper is provided in the project root
 
 Requirements
 [] python (2.6.5)
@@ -17,12 +20,11 @@ Additional Requirements (if you want to run Hadoop cluster examples)
 [] cxfreeze (4.0.1)
 [] hadoop (Cloudera CDH3 0.20.2+228)
 
-Algorithms closely track those in the paper where possible.  Alternative implementations are provided that extend those in the paper and provide more efficient implementations.  The examples are all independent to make them easier to understand at the expense of duplicative code.  Variable names are chosen to be similar to the paper if possible (often using the Type as the variable name as it is more descriptive).  The implementations used for performance testing are written in C and Python and are not the ones matching the figures.
-
-	   	   	       	      	    	  Written    PEP8	 Tests		 Hadoop Example
+Mapping from paper Algorithm #'s to code
+	   	   	       	      	    	  Written    PEP8	 Tests		 Hadoop Example Run/Data
 Algorithm 1:  wordcount/wordcount.py		  X	     X		 X
 Algorithm 2:  normalize/normalize.py		  X	     X		 X
-Algorithm 3:  classtrain/classtrain.py
+Algorithm 3:  classtrain/classtrain.py		  X	     X		 X
 Algorithm 4:  slidingwindow/slidingwindow.py	  X	     X	         X
 Algorithm 5:  kmeans/kmeans.py			  X	     X		 X
 Algorithm 6:  kmeans/kmeans_imc.py		  X	     X		 X
@@ -30,8 +32,6 @@ Algorithm 7:  bof/bof_maponly.py		  X	     X		 X
 Algorithm 8:  bof/bof.py			  X	     X		 X
 Algorithm 9:  bgsub/bgsub.py			  X	     X		 X
 Algorithm 10: compose/compose.py		  X	     X		 X
-
-
 
 If you use this in your research, please cite as
 B. White, T. Yeh, J. Lin, and L. Davis, "Web-scale computer vision using mapreduce for multimedia data mining," in MDMKDD, 2010.
