@@ -4,7 +4,7 @@ Notes about these examples
 - Goal: Ground the examples in the paper with actual implementations to improve understanding
 - As similar in function to the paper as possible
 - Variable names may differ if it improves readability (often the 'type' as it is more descriptive)
-- These are not the implementations used for the performance tests as those mix C/Python, use more complex Python libraries, use the TypedBytes input format, etc.
+- These are not the implementations used for the performance tests as those mix C/Python, use more complex Python libraries, use the TypedBytes input format, etc.  The performance test code is in a folder called "performance" and is less documented than the others.  This shows how to integrate C code, etc.
 - Portions of the algorithms may be 'mocked' out if their functionality is not of focus
 - Independent to make them easier to understand at the expense of duplicative code
 - A copy of the paper is provided in the project root
