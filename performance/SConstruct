@@ -1,0 +1,6 @@
+import distutils.sysconfig
+env = Environment()
+env.Replace(CXX = 'g++')
+env.Append(CCFLAGS =  '-O3 -Wall -msse -msse2 -ffast-math -ftree-vectorizer-verbose=2 -msse3 -ftree-vectorize')
+
+env.SharedLibrary('bgsub_fast', ['bgsub_fast.c'])
